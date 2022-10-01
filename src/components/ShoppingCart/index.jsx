@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import axios from '../../api/demoApi';
 import { useState, useEffect } from 'react';
 import { useStripe } from '@stripe/react-stripe-js';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const P = styled.p`
@@ -185,19 +185,6 @@ const ShoppingCart = () => {
             <FooterDiv>
                 <Button onClick={CheckoutHandler}>Proceed to Checkout</Button>
             </FooterDiv>
-            <ToastContainer
-                style={{ fontSize: "16px" }}
-                theme="dark"
-                position="top-center"
-                autoClose={3000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-            />
         </section>
     )
 }
