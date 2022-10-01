@@ -2,6 +2,8 @@ import styled from 'styled-components';
 import axios from '../../api/demoApi';
 import { useState, useEffect } from 'react';
 import { useStripe } from '@stripe/react-stripe-js';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const P = styled.p`
     font-weight: bold;
@@ -58,7 +60,17 @@ const Button = styled.a`
     border-radius: 10px;
     color: white;
     font-weight: bold;
+`;
 
+const ButtonMore = styled.a`
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    cursor: pointer;
+    background-color: #40B484;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
 `;
 
 const ShoppingCart = () => {
@@ -82,25 +94,32 @@ const ShoppingCart = () => {
             setCartItemsRebuilt(newArr);
 
         }).catch(err => {
-            alert("error", err)
+            toast.error("error", err)
         });
     }, [])
 
     const checkboxHandler = (id) => {
-        const newCartItems = cartItemsRebuilt.map((cartItem)=>{
-            if(cartItem._id === id) cartItem.checked = !cartItem.checked;
+        const newCartItems = cartItemsRebuilt.map((cartItem) => {
+            //cartItem.checked = false;
+            if (cartItem._id === id) cartItem.checked = !cartItem.checked;
             return cartItem;
         })
         setCartItemsRebuilt(newCartItems)
     };
 
     const CheckoutHandler = async () => {
-        const line_items = cartItemsRebuilt.map((cartItem) => {
+        const reg = /\d+\.\d+/g;
+
+        const line_items = cartItemsRebuilt.filter((cartItem) => {
+            return cartItem.checked === true;
+        }).map((cartItem) => {
+            const priceStr = cartItem.quotation.match(reg);
+            const price = parseFloat(priceStr[0]);
             return {
                 quantity: 1,
                 price_data: {
                     currency: "aud",
-                    unit_amount: 100,
+                    unit_amount: Math.round(price * 100),
                     product_data: {
                         name: cartItem.design.designName,
                         description: cartItem.quotationDetails,
@@ -109,8 +128,11 @@ const ShoppingCart = () => {
                 }
             }
         })
-        const dataObj = {line_items: line_items, customer_email: "blhxp1@gmail.com"}
-        
+        if(line_items.length === 0){
+            return toast.error('To checkout, you have to select at least one item.')
+        }
+        const dataObj = { line_items: line_items, customer_email: "blhxp1@gmail.com" }
+
         axios({
             method: 'POST',
             url: '/payment/create-checkout-session',
@@ -136,6 +158,7 @@ const ShoppingCart = () => {
                 <Div>Product</Div>
                 <Div>Quotation</Div>
                 <DivQuotationDetails>Quotation Details</DivQuotationDetails>
+                <Div></Div>
             </TableHeader>
             <TableContent>
                 {
@@ -143,7 +166,7 @@ const ShoppingCart = () => {
                         return (
                             <Item key={cartItem._id}>
                                 <DivCheckbox>
-                                    <input type="checkbox" checked={cartItem.checked} onChange={()=> checkboxHandler(cartItem._id)}></input>
+                                    <input type="checkbox" checked={cartItem.checked} onChange={() => checkboxHandler(cartItem._id)}></input>
                                 </DivCheckbox>
                                 <Div>
                                     <Img src={cartItem.image} alt="no pic"></Img>
@@ -151,6 +174,9 @@ const ShoppingCart = () => {
                                 <Div>{cartItem.design.designName}</Div>
                                 <Div>{cartItem.quotation}</Div>
                                 <DivQuotationDetails>{cartItem.quotationDetails}</DivQuotationDetails>
+                                <Div>
+                                    <ButtonMore>More</ButtonMore>
+                                </Div>
                             </Item>
                         )
                     })
@@ -159,6 +185,19 @@ const ShoppingCart = () => {
             <FooterDiv>
                 <Button onClick={CheckoutHandler}>Proceed to Checkout</Button>
             </FooterDiv>
+            <ToastContainer
+                style={{ fontSize: "16px" }}
+                theme="dark"
+                position="top-center"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+            />
         </section>
     )
 }
