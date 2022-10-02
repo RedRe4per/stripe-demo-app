@@ -131,7 +131,7 @@ const ShoppingCart = () => {
         if(line_items.length === 0){
             return toast.error('To checkout, you have to select at least one item.')
         }
-        const dataObj = { line_items: line_items, customer_email: "blhxp1@gmail.com" }
+        const dataObj = { line_items: line_items, customer_email: "blhxp1@gmail.com" }  //should get from local storage in court canva
 
         axios({
             method: 'POST',
