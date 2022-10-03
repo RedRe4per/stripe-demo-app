@@ -175,7 +175,7 @@ const ShoppingCart = () => {
                                 <Div>{cartItem.quotation}</Div>
                                 <DivQuotationDetails>{cartItem.quotationDetails}</DivQuotationDetails>
                                 <Div>
-                                    <ButtonMore>More</ButtonMore>
+                                    <ButtonMore>Create Order</ButtonMore>
                                 </Div>
                             </Item>
                         )
