@@ -46,7 +46,7 @@ const Info = styled.div`
     border: 3px solid lightgrey;
     border-radius: 15px;
     padding: 10px 20px;
-    width: 350px;
+    width: 650px;
     text-align:left;
 `;
 
@@ -65,6 +65,12 @@ const Span = styled.span`
     margin-left: 5px;
 `;
 
+const Span1 = styled.span`
+    color: grey;
+    margin-left: 5px;
+    font-size: 14px;
+`;
+
 const Span2 = styled.span`
     color: grey;
     font-weight: bold;
@@ -78,6 +84,8 @@ const SuccessInfo = () => {
         name: "",
         email: "",
         phone: "",
+        currency: "",
+        amount_total: "",
         address: {
             country: "",
             state: "",
@@ -94,12 +102,13 @@ const SuccessInfo = () => {
             method: 'GET',
             url: `/payment/${checkoutSessionId}`,
         }).then(response => {
-            console.log('11111')
             const { customer_details } = response.data;
             setCustomerData({
                 name: customer_details.name,
                 email: customer_details.email,
                 phone: customer_details.phone,
+                currency: response.data.currency,
+                amount_total: response.data.amount_total,
                 address: customer_details.address,
                 orderSessionId: response.data.id
             })
@@ -117,10 +126,11 @@ const SuccessInfo = () => {
             </Div>
             <P4>Order details: </P4>
             <Info>
-                <P3>Order_id: <Span>{'TBC, further database operation'}</Span></P3>
+                <P3>Order_id: <Span1>{customerData.orderSessionId}</Span1></P3>
                 <P3>Customer: <Span>{customerData.name}</Span></P3>
                 <P3>Email: <Span>{customerData.email}</Span></P3>
                 <P3>Phone: <Span>{customerData.phone}</Span></P3>
+                <P3>Total payment: <Span>{customerData.currency === 'aud'? 'A$': customerData.currency.toUpperCase()} {(customerData.amount_total/100).toFixed(2)}</Span></P3>
                 <P3a>Address:</P3a>
                 <P3><Span2>{customerData.address.country}, {customerData.address.state}, {customerData.address.city}</Span2></P3>
                 <P3><Span2>{customerData.address.line1}, {customerData.address.line2}, {customerData.address.postal_code}</Span2></P3>
