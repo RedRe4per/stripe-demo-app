@@ -138,7 +138,7 @@ const OrderFilling = () => {
         });
     }
 
-
+    
     return (
         <Section>
             <Header></Header>
@@ -146,7 +146,7 @@ const OrderFilling = () => {
                 {
                     orderItems.map((orderItem) => {
                         return (
-                            <DivOrderItem>
+                            <DivOrderItem key={orderItem.id}>
                                 <DivTop>Item: {orderItem.design.designName}</DivTop>
                                 <DivContent>
                                     <DivBlock><Img src={orderItem.image} alt="no pic"></Img></DivBlock>
