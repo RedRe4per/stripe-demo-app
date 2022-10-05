@@ -8,6 +8,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentCancel from './pages/PaymentCancel';
+import OrderFilling from './pages/OrderFilling';
 
 const stripePromise = loadStripe(process.env.REACT_APP_PUBLISHABLE_KEY);
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -17,6 +18,7 @@ root.render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />} />
+          <Route path="/orderFilling" element={<OrderFilling />} />
           <Route path="/success" element={<PaymentSuccess />} />
           <Route path="/cancel" element={<PaymentCancel />} />
         </Routes>

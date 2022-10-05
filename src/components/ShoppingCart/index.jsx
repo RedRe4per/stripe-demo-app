@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import axios from '../../api/demoApi';
 import { useState, useEffect } from 'react';
-import { useStripe } from '@stripe/react-stripe-js';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import localStorage from 'localStorage';
 
 const P = styled.p`
     font-weight: bold;
@@ -62,20 +62,9 @@ const Button = styled.a`
     font-weight: bold;
 `;
 
-const ButtonMore = styled.a`
-    text-decoration: none;
-    letter-spacing: 0.5px;
-    padding: 3px 10px;
-    cursor: pointer;
-    background-color: #40B484;
-    border-radius: 8px;
-    color: white;
-    font-weight: bold;
-`;
 
 const ShoppingCart = () => {
     const [cartItemsRebuilt, setCartItemsRebuilt] = useState([]);
-    const stripe = useStripe();
 
     useEffect(() => {
         axios({
@@ -83,11 +72,6 @@ const ShoppingCart = () => {
             url: '/cartItem',
         }).then(response => {
             const newArr = response.data.map((cartItem) => {
-                let quotationDetailsStr = "";
-                cartItem.quotationDetails.forEach((element) => {
-                    quotationDetailsStr += ` Color: ${element.color}, Quantity: ${element.quantity};`;
-                })
-                cartItem.quotationDetails = quotationDetailsStr;
                 cartItem.checked = false;
                 return cartItem;
             })
@@ -100,53 +84,20 @@ const ShoppingCart = () => {
 
     const checkboxHandler = (id) => {
         const newCartItems = cartItemsRebuilt.map((cartItem) => {
-            //cartItem.checked = false;
             if (cartItem._id === id) cartItem.checked = !cartItem.checked;
             return cartItem;
         })
         setCartItemsRebuilt(newCartItems)
     };
 
-    const CheckoutHandler = async () => {
-        const reg = /\d+\.\d+/g;
-
+    const CreateOrderHandler = async () => {
         const line_items = cartItemsRebuilt.filter((cartItem) => {
             return cartItem.checked === true;
-        }).map((cartItem) => {
-            const priceStr = cartItem.quotation.match(reg);
-            const price = parseFloat(priceStr[0]);
-            return {
-                quantity: 1,
-                price_data: {
-                    currency: "aud",
-                    unit_amount: Math.round(price * 100),
-                    product_data: {
-                        name: cartItem.design.designName,
-                        description: cartItem.quotationDetails,
-                        images: [cartItem.image],
-                    }
-                }
-            }
         })
-        if(line_items.length === 0){
-            return toast.error('To checkout, you have to select at least one item.')
-        }
-        const dataObj = { line_items: line_items, customer_email: "blhxp1@gmail.com" }  //should get from local storage in court canva
+        if(line_items.length === 0) return toast.error('To checkout, you have to select at least one item.');
 
-        axios({
-            method: 'POST',
-            url: '/payment/create-checkout-session',
-            data: dataObj
-        }).then(response => {
-            const { sessionId } = response.data;
-            stripe.redirectToCheckout({
-                sessionId
-            })
-
-        }).catch(err => {
-            console.log(err)
-        });
-
+        localStorage.setItem("line_items", JSON.stringify(line_items));
+        window.location.href = "http://localhost:3000/orderfilling";
     }
 
     return (
@@ -158,7 +109,6 @@ const ShoppingCart = () => {
                 <Div>Product</Div>
                 <Div>Quotation</Div>
                 <DivQuotationDetails>Quotation Details</DivQuotationDetails>
-                <Div></Div>
             </TableHeader>
             <TableContent>
                 {
@@ -173,17 +123,14 @@ const ShoppingCart = () => {
                                 </Div>
                                 <Div>{cartItem.design.designName}</Div>
                                 <Div>{cartItem.quotation}</Div>
-                                <DivQuotationDetails>{cartItem.quotationDetails}</DivQuotationDetails>
-                                <Div>
-                                    <ButtonMore>Create Order</ButtonMore>
-                                </Div>
+                                <DivQuotationDetails>{"size"}</DivQuotationDetails>
                             </Item>
                         )
                     })
                 }
             </TableContent>
             <FooterDiv>
-                <Button onClick={CheckoutHandler}>Proceed to Checkout</Button>
+                <Button onClick={CreateOrderHandler}>Create Order</Button>
             </FooterDiv>
         </section>
     )
