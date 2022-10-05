@@ -138,7 +138,7 @@ const OrderFilling = () => {
         });
     }
 
-    
+
     return (
         <Section>
             <Header></Header>
@@ -162,7 +162,7 @@ const OrderFilling = () => {
                 }
             </div>
             <FooterDiv>
-                <Button1>Go Back</Button1>
+                <Button1 href="http://localhost:3000" target="_self">Go Back</Button1>
                 <Button2 onClick={handleCheckout}>Proceed to Checkout</Button2>
             </FooterDiv>
         </Section>

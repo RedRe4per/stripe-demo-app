@@ -123,7 +123,7 @@ const ShoppingCart = () => {
                                 </Div>
                                 <Div>{cartItem.design.designName}</Div>
                                 <Div>{cartItem.quotation}</Div>
-                                <DivQuotationDetails>{"size"}</DivQuotationDetails>
+                                <DivQuotationDetails>{`Court type: ${cartItem.design.courtSize.name};  Size: ${cartItem.design.courtSize.length / 1000}m x ${cartItem.design.courtSize.width / 1000}m.`}</DivQuotationDetails>
                             </Item>
                         )
                     })
