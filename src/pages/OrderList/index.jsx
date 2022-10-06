@@ -178,7 +178,6 @@ const OrderList = () => {
     }, [])
 
 
-
     return (
         <Section>
             <Header></Header>
@@ -186,14 +185,17 @@ const OrderList = () => {
                 <DivHeaderTitle>My orders:</DivHeaderTitle>
                 {
                     orders.map((order) => {
+                        const createdDate = new Date(order.createdAt).toLocaleString();
+                        const updatedDate = new Date(order.updatedAt).toLocaleString();
+
                         return (
                             <div>
                                 <DivTopSub1>Order Id: {order.id}</DivTopSub1>
                                 <DivOrderItem key={order.id}>
                                     <DivTop>
                                         <DivTopSub2 style={{ 'color': order.totalPrice ?  'green' : 'red' }}>Status: {order.totalPrice ? 'Paid' : 'unpaid'}</DivTopSub2>
-                                        <DivTopSub3>Created at: {order.createdAt}</DivTopSub3>
-                                        <DivTopSub3>Updated at: {order.updatedAt}</DivTopSub3>
+                                        <DivTopSub3>Created at: {createdDate}</DivTopSub3>
+                                        <DivTopSub3>Updated at: {updatedDate}</DivTopSub3>
                                     </DivTop>
                                     <DivContentTitle>Items: </DivContentTitle>
                                     <DivContent>
